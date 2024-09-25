@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.10.35027.167
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TimeManagerZM", "TimeManagerZM\TimeManagerZM.csproj", "{FBA75E88-A2C6-4763-8DFF-4E5749978C45}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{FBA75E88-A2C6-4763-8DFF-4E5749978C45}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FBA75E88-A2C6-4763-8DFF-4E5749978C45}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FBA75E88-A2C6-4763-8DFF-4E5749978C45}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FBA75E88-A2C6-4763-8DFF-4E5749978C45}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {BB51D707-1B66-4412-8EED-BAB33E929C23}
+	EndGlobalSection
+EndGlobal
