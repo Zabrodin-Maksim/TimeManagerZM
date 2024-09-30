@@ -9,7 +9,8 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace TimeManagerZM
+
+namespace TimeManagerZM.View
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
