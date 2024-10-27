@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace TimeManagerZM.Model
 {
-    public class Activity
+    public class MyActivity
     {
         public int Id { get; set; }
         public string ActivityName { get; set; }

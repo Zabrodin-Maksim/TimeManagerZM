@@ -14,6 +14,6 @@ namespace TimeManagerZM.Model
 
         public List<ActivityType> ActivityTypes { get; set; }
 
-        public List<Activity> Activities { get; set; }
+        public List<MyActivity> Activities { get; set; }
     }
 }
