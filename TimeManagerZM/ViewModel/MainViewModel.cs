@@ -16,12 +16,23 @@ namespace TimeManagerZM.ViewModel
     public class MainViewModel : ViewModelBase
     {
         #region Private Fields
+        // Navigation
         private readonly MyNavigationService _navigationService;
+        private ViewModelBase _currentViewModel;
+
+        // Data
         private ActivityViewModel _activityVM;
         private UserViewModel _userVM;
         #endregion
 
         #region Properties
+        // Navigation
+        public ViewModelBase CurrentViewModel
+        {
+            get => _currentViewModel;
+            set => SetProperty(ref _currentViewModel, value, nameof(CurrentViewModel));
+        }
+
         // Activity
         public ObservableCollection<MyActivity> Activities { get; set; }
         public string NewActivityName { get; set; }
@@ -38,15 +49,27 @@ namespace TimeManagerZM.ViewModel
         #endregion
 
         #region Commands
+        // Navigation
+        public ICommand NavigateToDashboardCommand { get; }
+        public ICommand NavigateToAuthCommand { get; }
+
         // Activty
         public ICommand AddActivityCommand { get; }
         public ICommand LoadActivitiesCommand { get; }
         #endregion
 
-        public MainViewModel(MyNavigationService navigationService)
+        public MainViewModel()
         {
-            _navigationService = navigationService;
+            #region Navigation
 
+            _navigationService = new MyNavigationService(this);
+
+            // Navigation Commands
+            NavigateToAuthCommand = new MyICommand(() => _navigationService.Navigate(ViewType.Authorization));
+
+            // First Page
+            _navigationService.Navigate(ViewType.Authorization);
+            #endregion
             // Init DataViewModels
             _activityVM = new ActivityViewModel();
             _userVM = new UserViewModel();
@@ -63,13 +86,7 @@ namespace TimeManagerZM.ViewModel
             LoadAllUsers();
         }
 
-
-        #region Navigate
-        public void NavigateToSecondView()
-        {
-            _navigationService.Navigate(ViewType.Authoritatization);
-        }
-        #endregion
+        //TODO Дописать методы для работы с базой данных
 
         #region Activity Data Methods
 

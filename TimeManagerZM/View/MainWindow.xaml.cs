@@ -20,32 +20,12 @@ namespace TimeManagerZM.View
     /// </summary>
     public partial class MainWindow : Window
     {
-        private MainViewModel mainViewModel;
-        private MyNavigationService mynNavigationService;
-
         public MainWindow()
         {
             InitializeComponent();
 
-            mynNavigationService = new MyNavigationService(Navigate);
-            mainViewModel = new MainViewModel(mynNavigationService);
-
+            var mainViewModel = new MainViewModel();
             DataContext = mainViewModel;
-
-            Navigate(ViewType.Authoritatization);
-        }
-
-        private void Navigate(ViewType viewType)
-        {
-            switch (viewType)
-            {
-                case ViewType.MainView:
-                    MainContentControl.Content = new MainWindow();
-                    break;
-                case ViewType.Authoritatization:
-                    MainContentControl.Content = new Authoritatization();
-                    break;
-            }
         }
     }
 }

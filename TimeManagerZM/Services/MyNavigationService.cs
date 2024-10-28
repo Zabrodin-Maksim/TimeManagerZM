@@ -4,21 +4,27 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TimeManagerZM.Enums;
+using TimeManagerZM.ViewModel;
 
 namespace TimeManagerZM.Services
 {
     public class MyNavigationService
     {
-        private readonly Action<ViewType> _navigateAction;
+        private readonly MainViewModel _mainViewModel;
 
-        public MyNavigationService(Action<ViewType> navigateAction)
+        public MyNavigationService(MainViewModel mainViewModel)
         {
-            _navigateAction = navigateAction;
+            _mainViewModel = mainViewModel;
         }
 
-        public void Navigate(ViewType viewType) 
+        public void Navigate(ViewType viewType)
         {
-            _navigateAction(viewType);
+            switch (viewType)
+            {
+                case ViewType.Authorization:
+                    _mainViewModel.CurrentViewModel = new AuthorizationViewMdoel(_mainViewModel); // To Authorization
+                    break;
+            }
         }
 
     }

@@ -18,9 +18,9 @@ namespace TimeManagerZM.View
     /// <summary>
     /// Логика взаимодействия для Authoritatization.xaml
     /// </summary>
-    public partial class Authoritatization : UserControl
+    public partial class AuthorizationView : UserControl
     {
-        public Authoritatization()
+        public AuthorizationView()
         {
             InitializeComponent();
         }
