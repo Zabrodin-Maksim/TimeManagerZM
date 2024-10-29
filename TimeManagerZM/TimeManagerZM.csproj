@@ -9,7 +9,14 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Fonts\JollyLodger-Regular.ttf" />
+    <None Remove="Resources\Fonts\JollyLodger-Regular.ttf" />
+    <None Remove="Resources\Images\Logo.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Resources\Images\Logo.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
   </ItemGroup>
 
   <ItemGroup>
@@ -17,7 +24,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="Fonts\JollyLodger-Regular.ttf" />
+    <Resource Include="Resources\Fonts\JollyLodger-Regular.ttf" />
   </ItemGroup>
 
   <ItemGroup>

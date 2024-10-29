@@ -12,6 +12,8 @@
         <SolidColorBrush x:Key="backgroundMain" Color="#3D4D55"/>
         <!-- Color Text-->
         <SolidColorBrush x:Key="textColor" Color="#D3C3B9"/>
+        <!-- Background Buttons-->
+        <SolidColorBrush x:Key="backgroundButtons" Color="#9fbac1"/>
         <!-- Font Text -->
         <FontFamily x:Key="textFont">Poppins</FontFamily>
 
@@ -21,8 +23,9 @@
             <Setter Property="FontWeight" Value="Bold"/>
             <Setter Property="FontSize" Value="40"/>
             <Setter Property="Foreground" Value="{StaticResource textColor}"/>
-            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="HorizontalAlignment" Value="Right"/>
             <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Margin" Value="0,0,15,0"/>
         </Style>
         
         <!-- Style TextBox -->
@@ -31,29 +34,50 @@
             <Setter Property="Width" Value="200"/>
             <Setter Property="HorizontalAlignment" Value="Left"/>
             <Setter Property="Foreground" Value="{StaticResource backgroundMain}"/>
+            <Setter Property="Margin" Value="15,2,0,0"/>
         </Style>
-        
+
+        <!-- Style Buttons -->
+        <Style TargetType="Button">
+            <Setter Property="FontFamily" Value="{StaticResource textFont}"/>
+            <Setter Property="Foreground" Value="{StaticResource backgroundMain}"/>
+            <Setter Property="FontSize" Value="30"/>
+            <Setter Property="Margin" Value="60"/>
+            <Setter Property="Background" Value="{StaticResource backgroundButtons}"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+        </Style>
+
     </UserControl.Resources>
 
-    <Grid Background="{StaticResource backgroundMain}">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="0.8*"/>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="0.8*"/>
-        </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
+    <Grid>
 
-        <TextBlock Grid.Row="1" Grid.Column="1" Text="User name:"/>
-        <TextBlock Grid.Row="2" Grid.Column="1" Text="Password:"/>
+        <Grid Background="{StaticResource backgroundMain}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="0.8*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="0.8*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
 
-        <TextBox Text="{Binding Path=UserName, UpdateSourceTrigger=PropertyChanged}" Grid.Row="1" Grid.Column="2" />
-        <TextBox Text="{Binding Path=UserPassword, UpdateSourceTrigger=PropertyChanged}" Grid.Row="2" Grid.Column="2"/>
+            <TextBlock Grid.Row="1" Grid.Column="1" Text="User name:"/>
+            <TextBlock Grid.Row="2" Grid.Column="1" Text="Password:"/>
 
+            <TextBox Text="{Binding Path=UserName, UpdateSourceTrigger=PropertyChanged}" Grid.Row="1" Grid.Column="2" />
+            <TextBox Text="{Binding Path=UserPassword, UpdateSourceTrigger=PropertyChanged}" Grid.Row="2" Grid.Column="2"/>
+
+            <Button Command="{Binding RegisterCommand}" Grid.Row="3" Grid.Column="1" Content="Register"/>
+            <Button Command="{Binding LoginCommand}" Grid.Row="3" Grid.Column="2" Content="Login"/>
+        </Grid>
+        
+        <!--Designed by Freepik-->
+        <Image Source="/Resources/Images/Logo.png" Width="200" Height="200" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,40,0,0"/>
     </Grid>
+
+
 </UserControl>
