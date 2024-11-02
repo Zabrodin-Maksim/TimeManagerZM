@@ -29,7 +29,7 @@
 
   <ItemGroup>
     <None Update="Data\timemanager.db">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </None>
   </ItemGroup>
 

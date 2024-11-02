@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Transactions;
 using TimeManagerZM.Model;
 
 namespace TimeManagerZM.Data
@@ -15,7 +16,7 @@ namespace TimeManagerZM.Data
 
         public UserRepository()
         {
-            string databasePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Data\timemanager.db");
+            string databasePath = @"C:\\Users\\zabro\\source\\repos\\TimeManagerZM\\TimeManagerZM\\Data\\timemanager.db";
             connectionString = $"Data Source={databasePath};Version=3;";
         }
 
@@ -89,6 +90,34 @@ namespace TimeManagerZM.Data
                 }
             }
 
+            return user;
+        }
+
+        public User GetUserByNameAndPassword(string name, string password)
+        {
+            User user = null;
+
+            using (var connection = new SQLiteConnection(connectionString)) 
+            {
+                connection.Open();
+                string query = "SELECT * FROM User WHERE UserName = @UserName AND Password = @UserPassword";
+                SQLiteCommand command = new SQLiteCommand(query, connection);
+                command.Parameters.AddWithValue("@UserName", name);
+                command.Parameters.AddWithValue("@UserPassword", password);
+
+                using (SQLiteDataReader reader = command.ExecuteReader())
+                {
+                    if (reader.Read())
+                    {
+                        user = new User
+                        {
+                            Id = reader.GetInt32(0),
+                            UserName = reader.GetString(1),
+                            Password = reader.GetString(2)
+                        };
+                    }
+                }
+            }
             return user;
         }
 

@@ -27,14 +27,23 @@
             <Setter Property="VerticalAlignment" Value="Center"/>
             <Setter Property="Margin" Value="0,0,15,0"/>
         </Style>
-        
+
+        <!-- Style PasswordBox -->
+        <Style TargetType="PasswordBox">
+            <Setter Property="Height" Value="40"/>
+            <Setter Property="Width" Value="200"/>
+            <Setter Property="HorizontalAlignment" Value="Left"/>
+            <Setter Property="Foreground" Value="{StaticResource backgroundMain}"/>
+            <Setter Property="Margin" Value="15,69,0,0"/>
+        </Style>
+
         <!-- Style TextBox -->
         <Style TargetType="TextBox">
             <Setter Property="Height" Value="40"/>
             <Setter Property="Width" Value="200"/>
             <Setter Property="HorizontalAlignment" Value="Left"/>
             <Setter Property="Foreground" Value="{StaticResource backgroundMain}"/>
-            <Setter Property="Margin" Value="15,2,0,0"/>
+            <Setter Property="Margin" Value="15,69,0,0"/>
         </Style>
 
         <!-- Style Buttons -->
@@ -45,6 +54,13 @@
             <Setter Property="Margin" Value="60"/>
             <Setter Property="Background" Value="{StaticResource backgroundButtons}"/>
             <Setter Property="BorderBrush" Value="Transparent"/>
+        </Style>
+
+        <!-- Style Atenttion Text -->
+        <Style x:Key="atenttionText" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="#FF8E0000"/>
+            <Setter Property="FontSize" Value="15"/>
+            <Setter Property="Margin" Value="0,20,0,0"/>
         </Style>
 
     </UserControl.Resources>
@@ -68,10 +84,27 @@
             <TextBlock Grid.Row="1" Grid.Column="1" Text="User name:"/>
             <TextBlock Grid.Row="2" Grid.Column="1" Text="Password:"/>
 
-            <TextBox Text="{Binding Path=UserName, UpdateSourceTrigger=PropertyChanged}" Grid.Row="1" Grid.Column="2" />
-            <TextBox Text="{Binding Path=UserPassword, UpdateSourceTrigger=PropertyChanged}" Grid.Row="2" Grid.Column="2"/>
+            <Grid Grid.Row="1" Grid.Column="2">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="0.6*"/>
+                </Grid.RowDefinitions>
+                <TextBox Text="{Binding Path=UserName, UpdateSourceTrigger=PropertyChanged}"/>
 
-            <Button Command="{Binding RegisterCommand}" Grid.Row="3" Grid.Column="1" Content="Register"/>
+                <TextBlock Style="{StaticResource atenttionText}" Text="{Binding Path= AttentionTextUser, UpdateSourceTrigger=PropertyChanged}" Grid.Row="1"/>
+            </Grid>
+
+            <Grid Grid.Row="2" Grid.Column="2">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="0.6*"/>
+                </Grid.RowDefinitions>
+                <PasswordBox Name="txtPassword" Grid.Row="0"/>
+
+                <TextBlock Style="{StaticResource atenttionText}" Text="{Binding Path= AttentionTextPassword, UpdateSourceTrigger=PropertyChanged}" Grid.Row="1"/>
+            </Grid>
+            
+            <Button Command="{Binding RegisterCommand}" CommandParameter="{Binding ElementName=txtPassword}" Grid.Row="3" Grid.Column="1" Content="Register"/>
             <Button Command="{Binding LoginCommand}" Grid.Row="3" Grid.Column="2" Content="Login"/>
         </Grid>
         

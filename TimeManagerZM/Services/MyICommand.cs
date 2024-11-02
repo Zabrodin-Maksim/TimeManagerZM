@@ -7,6 +7,44 @@ using System.Windows.Input;
 
 namespace TimeManagerZM.View
 {
+    public class MyICommand<T> : ICommand
+    {
+        private readonly Action<T> _executeMethod;
+        private readonly Func<T, bool> _canExecuteMethod;
+
+        public MyICommand(Action<T> executeMethod)
+        {
+            _executeMethod = executeMethod ?? throw new ArgumentNullException(nameof(executeMethod));
+        }
+
+        public MyICommand(Action<T> executeMethod, Func<T, bool> canExecuteMethod)
+        {
+            _executeMethod = executeMethod ?? throw new ArgumentNullException(nameof(executeMethod));
+            _canExecuteMethod = canExecuteMethod;
+        }
+
+        public void RaiseCanExecuteChanged()
+        {
+            CanExecuteChanged?.Invoke(this, EventArgs.Empty);
+        }
+
+        #region ICommand Members
+
+        public bool CanExecute(object parameter)
+        {
+            return _canExecuteMethod == null || _canExecuteMethod((T)parameter);
+        }
+
+        public void Execute(object parameter)
+        {
+            _executeMethod?.Invoke((T)parameter);
+        }
+
+        public event EventHandler CanExecuteChanged;
+
+        #endregion
+
+    }
     public class MyICommand : ICommand
     {
         private readonly Action _executeMethod;
@@ -43,6 +81,7 @@ namespace TimeManagerZM.View
         public event EventHandler CanExecuteChanged;
 
         #endregion
+
     }
 }
 

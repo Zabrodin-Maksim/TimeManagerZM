@@ -13,8 +13,8 @@ namespace TimeManagerZM.Data
 
         public ActivityRepository()
         {
-            string databasePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Data\timemanager.db");
-            
+            string databasePath = @"C:\\Users\\zabro\\source\\repos\\TimeManagerZM\\TimeManagerZM\\Data\\timemanager.db";
+
             connectionString = $"Data Source={databasePath};Version=3;";
         }
 

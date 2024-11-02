@@ -10,6 +10,7 @@ using TimeManagerZM.Model;
 using System.Windows.Input;
 using TimeManagerZM.View;
 using System.Diagnostics;
+using TimeManagerZM.ViewModel.HelperViewModels;
 
 namespace TimeManagerZM.ViewModel
 {
@@ -22,7 +23,10 @@ namespace TimeManagerZM.ViewModel
 
         // Data
         private ActivityViewModel _activityVM;
+        private ActivityTypeViewModel _activityTypeVM;
         private UserViewModel _userVM;
+
+        private User _authorizedUser;
         #endregion
 
         #region Properties
@@ -41,10 +45,12 @@ namespace TimeManagerZM.ViewModel
         public int NewActivityTypeId { get; set; }
         public int NewActivityUserId { get; set; }
 
+        // ActivityType
+        public ObservableCollection<ActivityType> ActivityTypes { get; set; }
+
         // User
         public ObservableCollection<User> Users { get; set; }
-
-        // ActivityType
+        public User AuthorizedUser { get => _authorizedUser; set => _authorizedUser = value; }
 
         #endregion
 
@@ -70,33 +76,39 @@ namespace TimeManagerZM.ViewModel
             // First Page
             _navigationService.Navigate(ViewType.Authorization);
             #endregion
+
             // Init DataViewModels
             _activityVM = new ActivityViewModel();
             _userVM = new UserViewModel();
+            _activityTypeVM = new ActivityTypeViewModel();
 
             // Init Lists
             Activities = new ObservableCollection<MyActivity>();
+            ActivityTypes = new ObservableCollection<ActivityType>();
             Users = new ObservableCollection<User>();
 
             // Init Commands
             AddActivityCommand = new MyICommand(AddNewActivity);
-            LoadActivitiesCommand = new MyICommand(AddNewActivity);
+            LoadActivitiesCommand = new MyICommand(LoadAllActivities);
+
 
             LoadAllActivities();
             LoadAllUsers();
+            LoadAllActivityTypes();
         }
 
-        //TODO Дописать методы для работы с базой данных
 
+        //TODO 1. поменять debug in english, реализовать метод из репозитория GetUserByNameAndPassword, продумать над реализацией авторитизации (загрузка данных)
+        //TODO 2. Добавить методы нахождения данных по юзеру (ActivityRepository, ActivityTypeRepository)
+        //TODO 3. В Authorization реализовать Login()
         #region Activity Data Methods
-
-        private void AddNewActivity()
+        public void AddNewActivity()
         {
             try
             {
                 _activityVM.AddNewActivity(NewActivityName, NewActivityStartTime, NewActivityEndTime, NewActivityTypeId, NewActivityUserId);
                 Debug.WriteLine($"[INFO] Добавлена новая активность: {NewActivityName}, начало: {NewActivityStartTime}, тип: {NewActivityTypeId}, пользователь: {NewActivityUserId}");
-                LoadAllActivities(); // Обновление списка активностей после добавления новой
+                LoadAllActivities(); 
             }
             catch (Exception ex)
             {
@@ -104,7 +116,7 @@ namespace TimeManagerZM.ViewModel
             }
         }
 
-        private void LoadAllActivities()
+        public void LoadAllActivities()
         {
             try
             {
@@ -152,29 +164,138 @@ namespace TimeManagerZM.ViewModel
 
         #endregion
 
+
+        #region ActivityType Data Methods
+
+        public void AddNewActivityType(string typeName, int userId)
+        {
+            try
+            {
+                _activityTypeVM.AddNewActivityType(typeName, userId);
+                Debug.WriteLine($"[INFO] Добавлен новый тип активности: {typeName}, пользователь: {userId}");
+                LoadAllActivityTypes(); 
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Ошибка при добавлении типа активности: {ex.Message}");
+            }
+        }
+
+        public void LoadAllActivityTypes()
+        {
+            try
+            {
+                ActivityTypes.Clear();
+                var allActivityTypes = _activityTypeVM.LoadAllActivityTypes();
+                foreach (var activityType in allActivityTypes)
+                {
+                    ActivityTypes.Add(activityType);
+                }
+                Debug.WriteLine($"[INFO] Загружено {ActivityTypes.Count} типов активностей");
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Ошибка при загрузке типов активностей: {ex.Message}");
+            }
+        }
+
+        public void UpdateExistingActivityType(ActivityType activityType)
+        {
+            try
+            {
+                _activityTypeVM.UpdateExistingActivityType(activityType);
+                Debug.WriteLine($"Обновлен тип активности с ID {activityType.Id}");
+                LoadAllActivityTypes();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Ошибка при обновлении типа активности: {ex.Message}");
+            }
+        }
+
+        public void DeleteActivityType(int id)
+        {
+            try
+            {
+                _activityTypeVM.DeleteActivityType(id);
+                Debug.WriteLine($"Удален тип активности с ID {id}");
+                LoadAllActivityTypes();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Ошибка при удалении типа активности: {ex.Message}");
+            }
+        }
+
+        #endregion
+
+
         #region User Data Methods
 
-       
+        public void AddNewUser(string userName, string password)
+        {
+            try
+            {
+                _userVM.AddNewUser(userName, password);
+                Debug.WriteLine($"[INFO] Добавлен новый пользователь: {userName}");
+                LoadAllUsers(); // Обновление списка пользователей после добавления нового
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Ошибка при добавлении пользователя: {ex.Message}");
+            }
+        }
 
-        private void LoadAllUsers()
+        public void LoadAllUsers()
         {
             try
             {
                 Users.Clear();
                 var allUsers = _userVM.LoadAllUsers();
-                foreach (var activity in allUsers)
+                foreach (var user in allUsers)
                 {
-                    Users.Add(activity);
+                    Users.Add(user);
+                    Debug.WriteLine($"[INFO] Загружено {Users.Count} пользователей {Users[Users.Count - 1].UserName}");
                 }
-                Debug.WriteLine($"[INFO] Загружено {Users.Count} Юзеров");
+                Debug.WriteLine($"[INFO] Загружено {Users.Count} пользователей ");
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Ошибка при загрузке Юзеров: {ex.Message}");
+                Debug.WriteLine($"Ошибка при загрузке пользователей: {ex.Message}");
+            }
+        }
+
+        public void UpdateExistingUser(User user)
+        {
+            try
+            {
+                _userVM.UpdateExistingUser(user);
+                Debug.WriteLine($"Обновлен пользователь с ID {user.Id}");
+                LoadAllUsers();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Ошибка при обновлении пользователя: {ex.Message}");
+            }
+        }
+
+        public void DeleteUser(int id)
+        {
+            try
+            {
+                _userVM.DeleteUser(id);
+                Debug.WriteLine($"Удален пользователь с ID {id}");
+                LoadAllUsers();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Ошибка при удалении пользователя: {ex.Message}");
             }
         }
 
 
+
         #endregion
+
     }
 }
