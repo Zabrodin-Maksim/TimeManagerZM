@@ -97,7 +97,6 @@ namespace TimeManagerZM.ViewModel
             LoadAllActivityTypes();
         }
 
-
         //TODO 1. поменять debug in english, реализовать метод из репозитория GetUserByNameAndPassword, продумать над реализацией авторитизации (загрузка данных)
         //TODO 2. Добавить методы нахождения данных по юзеру (ActivityRepository, ActivityTypeRepository)
         //TODO 3. В Authorization реализовать Login()
