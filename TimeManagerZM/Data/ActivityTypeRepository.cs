@@ -19,32 +19,33 @@ namespace TimeManagerZM.Data
             connectionString = $"Data Source={databasePath};Version=3;";
         }
 
-        // Метод для добавления нового типа активности
         public void AddActivityType(ActivityType activityType)
         {
             using (var connection = new SQLiteConnection(connectionString))
             {
                 connection.Open();
-                string query = "INSERT INTO ActivityTypes (TypeName, UserId) VALUES (@TypeName, @UserId)";
+                string query = "INSERT INTO ActivityTypes (TypeName, ColoActr, UserId) VALUES (@TypeName, @ColorAct, @UserId)";
                 SQLiteCommand command = new SQLiteCommand(query, connection);
 
                 command.Parameters.AddWithValue("@TypeName", activityType.TypeName);
+                command.Parameters.AddWithValue("@ColorAct", activityType.ColoActr);
                 command.Parameters.AddWithValue("@UserId", activityType.UserId);
 
                 command.ExecuteNonQuery();
             }
         }
 
-        // Метод для получения всех типов активности
-        public List<ActivityType> GetAllActivityTypes()
+        public List<ActivityType> GetAllActivityTypesByUserId(int id)
         {
             List<ActivityType> activityTypes = new List<ActivityType>();
 
             using (var connection = new SQLiteConnection(connectionString))
             {
                 connection.Open();
-                string query = "SELECT * FROM ActivityTypes";
+                string query = "SELECT * FROM ActivityTypes WHERE UserId = @userId";
                 SQLiteCommand command = new SQLiteCommand(query, connection);
+
+                command.Parameters.AddWithValue("@userId", id);
 
                 using (SQLiteDataReader reader = command.ExecuteReader())
                 {
@@ -54,7 +55,8 @@ namespace TimeManagerZM.Data
                         {
                             Id = reader.GetInt32(0),
                             TypeName = reader.GetString(1),
-                            UserId = reader.GetInt32(2)
+                            ColoActr = reader.GetString(2),
+                            UserId = reader.GetInt32(3)
                         });
                     }
                 }
@@ -63,45 +65,16 @@ namespace TimeManagerZM.Data
             return activityTypes;
         }
 
-        // Метод для получения типа активности по его Id
-        public ActivityType GetActivityTypeById(int id)
-        {
-            ActivityType activityType = null;
-
-            using (var connection = new SQLiteConnection(connectionString))
-            {
-                connection.Open();
-                string query = "SELECT * FROM ActivityTypes WHERE Id = @Id";
-                SQLiteCommand command = new SQLiteCommand(query, connection);
-                command.Parameters.AddWithValue("@Id", id);
-
-                using (SQLiteDataReader reader = command.ExecuteReader())
-                {
-                    if (reader.Read())
-                    {
-                        activityType = new ActivityType
-                        {
-                            Id = reader.GetInt32(0),
-                            TypeName = reader.GetString(1),
-                            UserId = reader.GetInt32(2)
-                        };
-                    }
-                }
-            }
-
-            return activityType;
-        }
-
-        // Метод для обновления типа активности
         public void UpdateActivityType(ActivityType activityType)
         {
             using (var connection = new SQLiteConnection(connectionString))
             {
                 connection.Open();
-                string query = "UPDATE ActivityTypes SET TypeName = @TypeName, UserId = @UserId WHERE Id = @Id";
+                string query = "UPDATE ActivityTypes SET TypeName = @TypeName, ColoActr = @ColorAct, UserId = @UserId WHERE Id = @Id";
                 SQLiteCommand command = new SQLiteCommand(query, connection);
 
                 command.Parameters.AddWithValue("@TypeName", activityType.TypeName);
+                command.Parameters.AddWithValue("@ColorAct", activityType.ColoActr);
                 command.Parameters.AddWithValue("@UserId", activityType.UserId);
                 command.Parameters.AddWithValue("@Id", activityType.Id);
 
@@ -109,7 +82,6 @@ namespace TimeManagerZM.Data
             }
         }
 
-        // Метод для удаления типа активности
         public void DeleteActivityType(int id)
         {
             using (var connection = new SQLiteConnection(connectionString))

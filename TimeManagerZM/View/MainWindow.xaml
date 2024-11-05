@@ -10,19 +10,82 @@
         Title="Time Manager" 
         Height="740" 
         Width="1220" 
-
+        MinHeight="740" MinWidth="1220"
         WindowStartupLocation="CenterScreen" 
 
         WindowStyle="None" ResizeMode="NoResize" Background="Transparent" AllowsTransparency="True">
 
     <Window.Resources>
+        <!-- Background Menu-->
+        <SolidColorBrush x:Key="backgroundMenu" Color="#496571"/>
+        <!-- Color Burger-->
+        <SolidColorBrush x:Key="ColorBurger" Color="#9fbac1"/>
+        <!-- Background Buttons-->
+        <SolidColorBrush x:Key="backgroundButtons" Color="#D3C3B9"/>
+        <!-- Color Username-->
+        <SolidColorBrush x:Key="colorUsername" Color="#212922"/>
+
+        <!-- Style Buttons menu -->
+        <Style x:Key="ButtonMenu" TargetType="Button">
+            <Setter Property="Foreground" Value="#496571"/>
+            <Setter Property="FontSize" Value="30"/>
+            <Setter Property="Margin" Value="0,0,0,40"/>
+        </Style>
+
         <!-- DataTemplate для AuthorizationViewModel -->
         <DataTemplate DataType="{x:Type vm:AuthorizationViewMdoel}">
             <local:AuthorizationView />
         </DataTemplate>
     </Window.Resources>
-    
+
     <Grid>
-        <ContentControl Content="{Binding CurrentViewModel}" />
+        
+        <StackPanel Orientation="Horizontal" MinHeight="740" MinWidth="1220">
+            
+            <!--#region  MENU -->
+            <Grid MinWidth="300" Background="{StaticResource backgroundMenu}" Visibility="{Binding IsMenuVisible}">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="0.3*"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="0.3*"/>
+                </Grid.RowDefinitions>
+                
+                <!-- Visibility Menu Buttton -->
+                <Button Command="{Binding VisibilityMenu}" Grid.Row="0" Background="Transparent" BorderBrush="Transparent" Width="30" Height="30" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="10">
+                    <StackPanel>
+                        <Rectangle Height="4" Width="20" Fill="{StaticResource ColorBurger}" Margin="0,2"/>
+                        <Rectangle Height="4" Width="20" Fill="{StaticResource ColorBurger}" Margin="0,2"/>
+                        <Rectangle Height="4" Width="20" Fill="{StaticResource ColorBurger}" Margin="0,2"/>
+                    </StackPanel>
+                </Button>
+
+                <!-- User button -->
+                <Button Grid.Row="0" Background="Transparent" BorderBrush="Transparent" Height="45">
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center">
+                        <Image/>
+                        <TextBlock Text="Maxmen" Foreground="{StaticResource colorUsername}" FontSize="32"/>
+                    </StackPanel>
+                </Button>
+
+                <!-- Create Activity Buttton -->
+                <StackPanel Grid.Row="1" Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <Button Style="{StaticResource ButtonMenu}" Background="{StaticResource backgroundButtons}">
+                        <TextBlock Text="Create Activity" Padding="20"/>
+                    </Button>
+
+                    <Button Style="{StaticResource ButtonMenu}" Background="{StaticResource backgroundButtons}">
+                        <TextBlock Text="Dashboard" Padding="20"/>
+                    </Button>
+
+                    <Button Style="{StaticResource ButtonMenu}" Background="{StaticResource backgroundButtons}">
+                        <TextBlock Text="Types" Padding="20"/>
+                    </Button>
+                </StackPanel>
+            </Grid>
+            <!--#endregion-->
+            
+            <ContentControl Content="{Binding CurrentViewModel}" Grid.Column="1"/>
+        </StackPanel>
+        
     </Grid>
 </Window>

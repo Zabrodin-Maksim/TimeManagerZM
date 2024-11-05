@@ -17,7 +17,6 @@ namespace TimeManagerZM.ViewModel
             _activityRepository = new ActivityRepository();
         }
 
-        // Метод для добавления новой активности
         public void AddNewActivity(string activityName, DateTime startTime, DateTime? endTime, int activityTypeId, int userId)
         {
             var newActivity = new MyActivity
@@ -32,25 +31,21 @@ namespace TimeManagerZM.ViewModel
             _activityRepository.AddActivity(newActivity);
         }
 
-        // Метод для получения всех активностей
-        public List<MyActivity> LoadAllActivities()
+        public List<MyActivity> LoadAllActivitiesByUserId(int id)
         {
-            return _activityRepository.GetAllActivities();
+           return _activityRepository.GetAllActivitiesByUserId(id);
         }
 
-        // Метод для получения активности по её Id
         public MyActivity GetActivityById(int id)
         {
             return _activityRepository.GetActivityById(id);
         }
 
-        // Метод для обновления существующей активности
         public void UpdateExistingActivity(MyActivity activity)
         {
             _activityRepository.UpdateActivity(activity);
         }
 
-        // Метод для удаления активности
         public void DeleteActivity(int id)
         {
             _activityRepository.DeleteActivity(id);

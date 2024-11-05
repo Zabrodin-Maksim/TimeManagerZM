@@ -18,7 +18,6 @@ namespace TimeManagerZM.Data
             connectionString = $"Data Source={databasePath};Version=3;";
         }
 
-        // Метод для добавления новой активности
         public void AddActivity(MyActivity activity)
         {
             using (var connection = new SQLiteConnection(connectionString))
@@ -38,16 +37,17 @@ namespace TimeManagerZM.Data
             }
         }
 
-        // Метод для получения всех активностей
-        public List<MyActivity> GetAllActivities()
+        public List<MyActivity> GetAllActivitiesByUserId(int userId)
         {
             List<MyActivity> activities = new List<MyActivity>();
 
             using (var connection = new SQLiteConnection(connectionString))
             {
                 connection.Open();
-                string query = "SELECT * FROM Activity";
+                string query = "SELECT * FROM Activity WHERE UserId = @userId";
                 SQLiteCommand command = new SQLiteCommand(query, connection);
+
+                command.Parameters.AddWithValue("@userId", userId);
 
                 using (SQLiteDataReader reader = command.ExecuteReader())
                 {
@@ -69,7 +69,6 @@ namespace TimeManagerZM.Data
             return activities;
         }
 
-        // Метод для получения активности по её Id
         public MyActivity GetActivityById(int id)
         {
             MyActivity activity = null;
@@ -101,7 +100,6 @@ namespace TimeManagerZM.Data
             return activity;
         }
 
-        // Метод для обновления активности
         public void UpdateActivity(MyActivity activity)
         {
             using (var connection = new SQLiteConnection(connectionString))
@@ -122,7 +120,6 @@ namespace TimeManagerZM.Data
             }
         }
 
-        // Метод для удаления активности
         public void DeleteActivity(int id)
         {
             using (var connection = new SQLiteConnection(connectionString))

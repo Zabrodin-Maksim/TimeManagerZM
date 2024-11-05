@@ -18,37 +18,28 @@ namespace TimeManagerZM.ViewModel.HelperViewModels
             _activityTypeRepository = new ActivityTypeRepository();
         }
 
-        // Метод для добавления нового типа активности
-        public void AddNewActivityType(string typeName, int userId)
+        public void AddNewActivityType(string typeName, string colorAct, int userId)
         {
             var newActivityType = new ActivityType
             {
                 TypeName = typeName,
+                ColoActr = colorAct,
                 UserId = userId
             };
 
             _activityTypeRepository.AddActivityType(newActivityType);
         }
-
-        // Метод для получения всех типов активности
-        public List<ActivityType> LoadAllActivityTypes()
+  
+        public List<ActivityType> GetAllActivitiesByUserId(int id)
         {
-            return _activityTypeRepository.GetAllActivityTypes();
+            return _activityTypeRepository.GetAllActivityTypesByUserId(id);
         }
 
-        // Метод для получения типа активности по Id
-        public ActivityType GetActivityTypeById(int id)
-        {
-            return _activityTypeRepository.GetActivityTypeById(id);
-        }
-
-        // Метод для обновления существующего типа активности
         public void UpdateExistingActivityType(ActivityType activityType)
         {
             _activityTypeRepository.UpdateActivityType(activityType);
         }
 
-        // Метод для удаления типа активности
         public void DeleteActivityType(int id)
         {
             _activityTypeRepository.DeleteActivityType(id);

@@ -11,12 +11,16 @@ using System.Windows.Input;
 using TimeManagerZM.View;
 using System.Diagnostics;
 using TimeManagerZM.ViewModel.HelperViewModels;
+using System.Windows;
 
 namespace TimeManagerZM.ViewModel
 {
     public class MainViewModel : ViewModelBase
     {
         #region Private Fields
+        // Menu Visibility
+        private Visibility _isMenuVisibility;
+
         // Navigation
         private readonly MyNavigationService _navigationService;
         private ViewModelBase _currentViewModel;
@@ -30,6 +34,9 @@ namespace TimeManagerZM.ViewModel
         #endregion
 
         #region Properties
+        // Menu Visibility
+        public Visibility IsMenuVisible { get => _isMenuVisibility; set { SetProperty(ref _isMenuVisibility, value, nameof(IsMenuVisible)); } }
+
         // Navigation
         public ViewModelBase CurrentViewModel
         {
@@ -39,18 +46,12 @@ namespace TimeManagerZM.ViewModel
 
         // Activity
         public ObservableCollection<MyActivity> Activities { get; set; }
-        public string NewActivityName { get; set; }
-        public DateTime NewActivityStartTime { get; set; } = DateTime.Now;
-        public DateTime? NewActivityEndTime { get; set; }
-        public int NewActivityTypeId { get; set; }
-        public int NewActivityUserId { get; set; }
 
         // ActivityType
         public ObservableCollection<ActivityType> ActivityTypes { get; set; }
 
         // User
-        public ObservableCollection<User> Users { get; set; }
-        public User AuthorizedUser { get => _authorizedUser; set => _authorizedUser = value; }
+        public User AuthorizedUser { get => _authorizedUser; private set => _authorizedUser = value; }
 
         #endregion
 
@@ -58,11 +59,12 @@ namespace TimeManagerZM.ViewModel
         // Navigation
         public ICommand NavigateToDashboardCommand { get; }
         public ICommand NavigateToAuthCommand { get; }
+        // Menu
+        public ICommand VisibilityMenu {  get; }
 
-        // Activty
-        public ICommand AddActivityCommand { get; }
-        public ICommand LoadActivitiesCommand { get; }
+
         #endregion
+
 
         public MainViewModel()
         {
@@ -74,8 +76,11 @@ namespace TimeManagerZM.ViewModel
             NavigateToAuthCommand = new MyICommand(() => _navigationService.Navigate(ViewType.Authorization));
 
             // First Page
-            _navigationService.Navigate(ViewType.Authorization);
+            NavigateToAuthCommand.Execute(null);
             #endregion
+
+            // Init Commands
+            VisibilityMenu = new MyICommand(ChangeMenuVisibility);
 
             // Init DataViewModels
             _activityVM = new ActivityViewModel();
@@ -85,52 +90,52 @@ namespace TimeManagerZM.ViewModel
             // Init Lists
             Activities = new ObservableCollection<MyActivity>();
             ActivityTypes = new ObservableCollection<ActivityType>();
-            Users = new ObservableCollection<User>();
 
-            // Init Commands
-            AddActivityCommand = new MyICommand(AddNewActivity);
-            LoadActivitiesCommand = new MyICommand(LoadAllActivities);
-
-
-            LoadAllActivities();
-            LoadAllUsers();
-            LoadAllActivityTypes();
+            // Menu Visibility
+            IsMenuVisible = Visibility.Collapsed;
         }
 
-        //TODO 1. поменять debug in english, реализовать метод из репозитория GetUserByNameAndPassword, продумать над реализацией авторитизации (загрузка данных)
-        //TODO 2. Добавить методы нахождения данных по юзеру (ActivityRepository, ActivityTypeRepository)
-        //TODO 3. В Authorization реализовать Login()
+        //TODO 4. РЕАЛИЗОВАТЬ ИНТЕРФЕЙС
+
         #region Activity Data Methods
-        public void AddNewActivity()
+        public void AddNewActivity(string activityName, DateTime startTime, DateTime? endTime, int activityTypeId)
         {
-            try
+            if (AuthorizedUser != null)
             {
-                _activityVM.AddNewActivity(NewActivityName, NewActivityStartTime, NewActivityEndTime, NewActivityTypeId, NewActivityUserId);
-                Debug.WriteLine($"[INFO] Добавлена новая активность: {NewActivityName}, начало: {NewActivityStartTime}, тип: {NewActivityTypeId}, пользователь: {NewActivityUserId}");
-                LoadAllActivities(); 
+                try
+                {
+                    _activityVM.AddNewActivity(activityName, startTime, endTime, activityTypeId, AuthorizedUser.Id);
+                    Debug.WriteLine($"[INFO] New activity added: {activityName}, start time: {startTime}, type: {activityTypeId}, user: {AuthorizedUser.Id}");
+                    LoadAllActivitiesByUserId();
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error adding activity: {ex.Message}");
+                }
             }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Ошибка при добавлении активности: {ex.Message}");
-            }
+            else MassageWindow(MessageBoxImage.Error, "Not authorized user!", "HO IS THIS?");
         }
 
-        public void LoadAllActivities()
+        public void LoadAllActivitiesByUserId()
         {
-            try
+            if (AuthorizedUser != null)
             {
-                Activities.Clear();
-                var allActivities = _activityVM.LoadAllActivities();
-                foreach (var activity in allActivities)
+                try
                 {
-                    Activities.Add(activity);
+                    Activities.Clear();
+                    var allActivities = _activityVM.LoadAllActivitiesByUserId(AuthorizedUser.Id);
+                    foreach (var activity in allActivities)
+                    {
+                        Activities.Add(activity);
+                    }
+                    Debug.WriteLine($"[INFO] {Activities.Count} activities loaded");
                 }
-                Debug.WriteLine($"[INFO] Загружено {Activities.Count} активностей");
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"Error loading activities: {ex.Message}");
+                }
             }
-            catch (Exception ex)
-            {
-                Debug.WriteLine($"Ошибка при загрузке активностей: {ex.Message}");
-            }
+            else MassageWindow(MessageBoxImage.Error, "Not authorized user!", "HO IS THIS?");
         }
 
         public void UpdateExistingActivity(MyActivity activity)
@@ -138,12 +143,13 @@ namespace TimeManagerZM.ViewModel
             try
             {
                 _activityVM.UpdateExistingActivity(activity);
-                Debug.WriteLine($"Обновлена активность с ID {activity.Id}");
-                LoadAllActivities();
+                Debug.WriteLine($"Activity with ID {activity.Id} updated");
+                
+                LoadAllActivitiesByUserId();
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Ошибка при обновлении активности: {ex.Message}");
+                Debug.WriteLine($"Error updating activity: {ex.Message}");
             }
         }
 
@@ -152,12 +158,12 @@ namespace TimeManagerZM.ViewModel
             try
             {
                 _activityVM.DeleteActivity(id);
-                Debug.WriteLine($"Удалена активность с ID {id}");
-                LoadAllActivities();
+                Debug.WriteLine($"Activity with ID {id} deleted");
+                LoadAllActivitiesByUserId();
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Ошибка при удалении активности: {ex.Message}");
+                Debug.WriteLine($"Error deleting activity: {ex.Message}");
             }
         }
 
@@ -166,36 +172,44 @@ namespace TimeManagerZM.ViewModel
 
         #region ActivityType Data Methods
 
-        public void AddNewActivityType(string typeName, int userId)
+        public void AddNewActivityType(string typeName, string colorAct)
         {
-            try
+            if (AuthorizedUser != null)
             {
-                _activityTypeVM.AddNewActivityType(typeName, userId);
-                Debug.WriteLine($"[INFO] Добавлен новый тип активности: {typeName}, пользователь: {userId}");
-                LoadAllActivityTypes(); 
+                try
+                {
+                    _activityTypeVM.AddNewActivityType(typeName, colorAct, AuthorizedUser.Id);
+                    Debug.WriteLine($"[INFO] New activity type added: {typeName}, user: {AuthorizedUser.Id}");
+                    LoadAllActivityTypes();
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"Error adding activity type: {ex.Message}");
+                }
             }
-            catch (Exception ex)
-            {
-                Debug.WriteLine($"Ошибка при добавлении типа активности: {ex.Message}");
-            }
+            else MassageWindow(MessageBoxImage.Error, "Not authorized user!", "HO IS THIS?");
         }
 
         public void LoadAllActivityTypes()
         {
-            try
+            if (AuthorizedUser != null)
             {
-                ActivityTypes.Clear();
-                var allActivityTypes = _activityTypeVM.LoadAllActivityTypes();
-                foreach (var activityType in allActivityTypes)
+                try
                 {
-                    ActivityTypes.Add(activityType);
+                    ActivityTypes.Clear();
+                    var allActivityTypes = _activityTypeVM.GetAllActivitiesByUserId(AuthorizedUser.Id);
+                    foreach (var activityType in allActivityTypes)
+                    {
+                        ActivityTypes.Add(activityType);
+                    }
+                    Debug.WriteLine($"[INFO] {ActivityTypes.Count} activity types loaded");
                 }
-                Debug.WriteLine($"[INFO] Загружено {ActivityTypes.Count} типов активностей");
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"Error loading activity types: {ex.Message}");
+                }
             }
-            catch (Exception ex)
-            {
-                Debug.WriteLine($"Ошибка при загрузке типов активностей: {ex.Message}");
-            }
+            else MassageWindow(MessageBoxImage.Error, "Not authorized user!", "HO IS THIS?");
         }
 
         public void UpdateExistingActivityType(ActivityType activityType)
@@ -203,12 +217,12 @@ namespace TimeManagerZM.ViewModel
             try
             {
                 _activityTypeVM.UpdateExistingActivityType(activityType);
-                Debug.WriteLine($"Обновлен тип активности с ID {activityType.Id}");
+                Debug.WriteLine($"Activity type with ID {activityType.Id} updated");
                 LoadAllActivityTypes();
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Ошибка при обновлении типа активности: {ex.Message}");
+                Debug.WriteLine($"Error updating activity type: {ex.Message}");
             }
         }
 
@@ -217,12 +231,12 @@ namespace TimeManagerZM.ViewModel
             try
             {
                 _activityTypeVM.DeleteActivityType(id);
-                Debug.WriteLine($"Удален тип активности с ID {id}");
+                Debug.WriteLine($"Activity type with ID {id} deleted");
                 LoadAllActivityTypes();
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Ошибка при удалении типа активности: {ex.Message}");
+                Debug.WriteLine($"Error deleting activity type: {ex.Message}");
             }
         }
 
@@ -231,37 +245,33 @@ namespace TimeManagerZM.ViewModel
 
         #region User Data Methods
 
-        public void AddNewUser(string userName, string password)
+        public void AddNewUser(string username, string password)
         {
             try
             {
-                _userVM.AddNewUser(userName, password);
-                Debug.WriteLine($"[INFO] Добавлен новый пользователь: {userName}");
-                LoadAllUsers(); // Обновление списка пользователей после добавления нового
+                _userVM.AddNewUser(username, password);
+                Debug.WriteLine($"[INFO] New user added: {username}");
+                //LoadAllUsers(); // Обновление списка пользователей после добавления нового
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Ошибка при добавлении пользователя: {ex.Message}");
+                Debug.WriteLine($"Error adding user: {ex.Message}");
             }
         }
 
-        public void LoadAllUsers()
+        public bool GetUser(string username, string password)
         {
             try
             {
-                Users.Clear();
-                var allUsers = _userVM.LoadAllUsers();
-                foreach (var user in allUsers)
-                {
-                    Users.Add(user);
-                    Debug.WriteLine($"[INFO] Загружено {Users.Count} пользователей {Users[Users.Count - 1].UserName}");
-                }
-                Debug.WriteLine($"[INFO] Загружено {Users.Count} пользователей ");
+                AuthorizedUser = _userVM.GetUserByNameAndPassword(username, password);
+                Debug.WriteLine($"[INFO] User {username} loaded");
+                if (AuthorizedUser != null) { return true; }
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Ошибка при загрузке пользователей: {ex.Message}");
+                Debug.WriteLine($"Error loading user: {ex.Message}");
             }
+            return false;
         }
 
         public void UpdateExistingUser(User user)
@@ -269,12 +279,12 @@ namespace TimeManagerZM.ViewModel
             try
             {
                 _userVM.UpdateExistingUser(user);
-                Debug.WriteLine($"Обновлен пользователь с ID {user.Id}");
-                LoadAllUsers();
+                Debug.WriteLine($"User with ID {user.Id} updated");
+                //LoadAllUsers();
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Ошибка при обновлении пользователя: {ex.Message}");
+                Debug.WriteLine($"Error updating user: {ex.Message}");
             }
         }
 
@@ -283,18 +293,29 @@ namespace TimeManagerZM.ViewModel
             try
             {
                 _userVM.DeleteUser(id);
-                Debug.WriteLine($"Удален пользователь с ID {id}");
-                LoadAllUsers();
+                Debug.WriteLine($"User with ID {id} deleted");
+                //LoadAllUsers();
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Ошибка при удалении пользователя: {ex.Message}");
+                Debug.WriteLine($"Error deleting user: {ex.Message}");
             }
         }
-
-
-
         #endregion
 
+
+        public void ChangeMenuVisibility()
+        {
+            if (IsMenuVisible == Visibility.Visible)
+            {
+                IsMenuVisible = Visibility.Collapsed;
+            }
+            else { IsMenuVisible = Visibility.Visible; }
+        }
+
+        public void MassageWindow(MessageBoxImage messageBoxImage, string textMessage, string title)
+        {
+            MessageBox.Show(textMessage, title, MessageBoxButton.OK, messageBoxImage);
+        }
     }
 }

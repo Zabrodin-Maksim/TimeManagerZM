@@ -28,7 +28,7 @@ namespace TimeManagerZM.ViewModel
 
         // Text for attention
         private string smallPasswordText = "The password must contain \nat least 8 characters.";
-        private string wrongLogin = "User name is not found!";
+        private string wrongLogin = "Username is not found or";
         private string wrongPassword = "Wrong Password!";
 
         // Properties
@@ -46,7 +46,7 @@ namespace TimeManagerZM.ViewModel
         public string AttentionTextUser
         {
             get => _attentionTextUser;
-            set { SetProperty(ref _attentionTextUser, value, nameof(_attentionTextUser)); }
+            set { SetProperty(ref _attentionTextUser, value, nameof(AttentionTextUser)); }
         }
         public string AttentionTextPassword
         {
@@ -64,6 +64,8 @@ namespace TimeManagerZM.ViewModel
         
         private void Register(object parameter)
         {
+            AttentionTextPassword = "";
+            AttentionTextUser = "";
             if (parameter is PasswordBox passwordBox) 
             {
                 UserPassword = passwordBox.Password;
@@ -71,11 +73,13 @@ namespace TimeManagerZM.ViewModel
                 // Check Password by rules 
                 if (!IsPasswordOk(UserPassword))
                 {
-                    AttentionTextPassword = smallPasswordText;
-                }
+                    AttentionTextPassword = smallPasswordText;  
+                } 
                 else // is ok
                 {
                     AttentionTextPassword = "";
+
+                    // Send to Database
                     _mainViewModel.AddNewUser(UserName, UserPassword);
 
                     Debug.WriteLine("[INFO] A new User was successfully added!");
@@ -89,17 +93,31 @@ namespace TimeManagerZM.ViewModel
         {
             if (parameter is PasswordBox passwordBox)
             {
+                UserPassword = passwordBox.Password;
+
+                // Check Password by rules 
                 if (!IsPasswordOk(UserPassword))
                 {
-                    AttentionTextUser = wrongPassword;
+                    AttentionTextPassword = smallPasswordText;
+                    AttentionTextUser = wrongLogin;
                 }
-                else
+                else // is ok
                 {
-                    AttentionTextUser = "";
-                    
+                    // Check exist user 
+                    if (!_mainViewModel.GetUser(UserName, UserPassword))
+                    {
+                        AttentionTextUser = wrongLogin;
+                        AttentionTextPassword = wrongPassword;
+                    }
+                    // clear Attentions
+                    else
+                    {
+                        AttentionTextPassword = "";
+                        AttentionTextUser = "";
+                    }
                 }
+                UserPassword = String.Empty; // Clear Property
             }
-            _mainViewModel.LoadAllUsers();
         }
 
         private bool IsPasswordOk(string password)

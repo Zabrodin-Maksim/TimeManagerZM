@@ -53,5 +53,10 @@ namespace TimeManagerZM.ViewModel
         {
             _userRepository.DeleteUser(id);
         }
+
+        internal User GetUserByNameAndPassword(string username, string password)
+        {
+           return _userRepository.GetUserByNameAndPassword(username, password);
+        }
     }
 }

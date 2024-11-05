@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:TimeManagerZM.View"
              mc:Ignorable="d" 
+             MinHeight="740" MinWidth="1220"
              d:DesignHeight="740" d:DesignWidth="1220">
 
     <UserControl.Resources>
@@ -30,20 +31,24 @@
 
         <!-- Style PasswordBox -->
         <Style TargetType="PasswordBox">
-            <Setter Property="Height" Value="40"/>
+            <Setter Property="Height" Value="35"/>
             <Setter Property="Width" Value="200"/>
+            <Setter Property="FontSize" Value="24"/>
+            <Setter Property="Foreground" Value="{StaticResource backgroundMain}"/>
             <Setter Property="HorizontalAlignment" Value="Left"/>
             <Setter Property="Foreground" Value="{StaticResource backgroundMain}"/>
-            <Setter Property="Margin" Value="15,74,0,0"/>
+            <Setter Property="Margin" Value="15,64,0,0"/>
         </Style>
 
         <!-- Style TextBox -->
         <Style TargetType="TextBox">
-            <Setter Property="Height" Value="40"/>
+            <Setter Property="Height" Value="35"/>
             <Setter Property="Width" Value="200"/>
+            <Setter Property="FontSize" Value="24"/>
+            <Setter Property="Foreground" Value="{StaticResource backgroundMain}"/>
             <Setter Property="HorizontalAlignment" Value="Left"/>
             <Setter Property="Foreground" Value="{StaticResource backgroundMain}"/>
-            <Setter Property="Margin" Value="15,74,0,0"/>
+            <Setter Property="Margin" Value="15,64,0,0"/>
         </Style>
 
         <!-- Style Buttons -->
@@ -51,7 +56,7 @@
             <Setter Property="FontFamily" Value="{StaticResource textFont}"/>
             <Setter Property="Foreground" Value="{StaticResource backgroundMain}"/>
             <Setter Property="FontSize" Value="30"/>
-            <Setter Property="Margin" Value="60"/>
+            <Setter Property="Margin" Value="55"/>
             <Setter Property="Background" Value="{StaticResource backgroundButtons}"/>
             <Setter Property="BorderBrush" Value="Transparent"/>
         </Style>
@@ -75,13 +80,13 @@
                 <ColumnDefinition Width="0.8*"/>
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
-                <RowDefinition Height="*"/>
+                <RowDefinition Height="1.5*"/>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
-            <TextBlock Grid.Row="1" Grid.Column="1" Text="User name:"/>
+            <TextBlock Grid.Row="1" Grid.Column="1" Text="Username:"/>
             <TextBlock Grid.Row="2" Grid.Column="1" Text="Password:"/>
 
             <Grid Grid.Row="1" Grid.Column="2">
@@ -105,11 +110,11 @@
             </Grid>
             
             <Button Command="{Binding RegisterCommand}" CommandParameter="{Binding ElementName=txtPassword}" Grid.Row="3" Grid.Column="1" Content="Register"/>
-            <Button Command="{Binding LoginCommand}" Grid.Row="3" Grid.Column="2" Content="Login"/>
+            <Button Command="{Binding LoginCommand}" CommandParameter="{Binding ElementName=txtPassword}" Grid.Row="3" Grid.Column="2" Content="Login"/>
         </Grid>
         
         <!--Designed by Freepik-->
-        <Image Source="/Resources/Images/Logo.png" Width="200" Height="200" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,40,0,0"/>
+        <Image Source="/Resources/Images/Logo.png" Width="200" Height="200" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,60,0,0"/>
     </Grid>
 
 

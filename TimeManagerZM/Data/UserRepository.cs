@@ -23,7 +23,6 @@ namespace TimeManagerZM.Data
             connectionString = $"Data Source={databasePath};Version=3;";
         }
 
-        // Метод для добавления нового пользователя
         public void AddUser(User user)
         {
             using (var connection = new SQLiteConnection(connectionString))
@@ -41,7 +40,6 @@ namespace TimeManagerZM.Data
             }
         }
 
-        // Метод для получения всех пользователей
         public List<User> GetAllUsers()
         {
             List<User> users = new List<User>();
@@ -69,7 +67,6 @@ namespace TimeManagerZM.Data
             return users;
         }
 
-        // Метод для получения пользователя по его Id
         public User GetUserById(int id)
         {
             User user = null;
@@ -132,7 +129,6 @@ namespace TimeManagerZM.Data
             return null;
         }
 
-        // Метод для обновления данных пользователя
         public void UpdateUser(User user)
         {
             using (var connection = new SQLiteConnection(connectionString))
@@ -151,7 +147,6 @@ namespace TimeManagerZM.Data
             }
         }
 
-        // Метод для удаления пользователя
         public void DeleteUser(int id)
         {
             using (var connection = new SQLiteConnection(connectionString))
