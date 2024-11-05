@@ -57,14 +57,14 @@ namespace TimeManagerZM.ViewModel
 
         #region Commands
         // Navigation
-        public ICommand NavigateToDashboardCommand { get; }
+        public ICommand NavigateToCreateActivityCommand { get; }
         public ICommand NavigateToAuthCommand { get; }
+
         // Menu
         public ICommand VisibilityMenu {  get; }
 
 
         #endregion
-
 
         public MainViewModel()
         {
@@ -74,6 +74,7 @@ namespace TimeManagerZM.ViewModel
 
             // Navigation Commands
             NavigateToAuthCommand = new MyICommand(() => _navigationService.Navigate(ViewType.Authorization));
+            NavigateToCreateActivityCommand = new MyICommand(() => _navigationService.Navigate(ViewType.CreateActivity));
 
             // First Page
             NavigateToAuthCommand.Execute(null);
@@ -92,10 +93,9 @@ namespace TimeManagerZM.ViewModel
             ActivityTypes = new ObservableCollection<ActivityType>();
 
             // Menu Visibility
-            IsMenuVisible = Visibility.Collapsed;
+            IsMenuVisible = Visibility.Visible;
         }
 
-        //TODO 4. РЕАЛИЗОВАТЬ ИНТЕРФЕЙС
 
         #region Activity Data Methods
         public void AddNewActivity(string activityName, DateTime startTime, DateTime? endTime, int activityTypeId)

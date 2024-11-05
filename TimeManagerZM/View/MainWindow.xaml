@@ -36,6 +36,11 @@
         <DataTemplate DataType="{x:Type vm:AuthorizationViewMdoel}">
             <local:AuthorizationView />
         </DataTemplate>
+
+        <!-- DataTemplate для CreateActivityViewModel -->
+        <DataTemplate DataType="{x:Type vm:CreateActivityViewModel}">
+            <local:CreateActivityView />
+        </DataTemplate>
     </Window.Resources>
 
     <Grid>
@@ -69,7 +74,7 @@
 
                 <!-- Create Activity Buttton -->
                 <StackPanel Grid.Row="1" Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
-                    <Button Style="{StaticResource ButtonMenu}" Background="{StaticResource backgroundButtons}">
+                    <Button Command="{Binding NavigateToCreateActivityCommand}" Style="{StaticResource ButtonMenu}" Background="{StaticResource backgroundButtons}">
                         <TextBlock Text="Create Activity" Padding="20"/>
                     </Button>
 

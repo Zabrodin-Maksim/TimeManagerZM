@@ -9,6 +9,7 @@ namespace TimeManagerZM.Enums
     public enum ViewType
     {
         MainView,
-        Authorization
+        Authorization,
+        CreateActivity
     }
 }

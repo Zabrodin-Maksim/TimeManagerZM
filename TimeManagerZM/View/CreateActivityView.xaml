@@ -15,6 +15,6 @@
     </UserControl.Resources>
     
     <Grid>
-            
+        <Button></Button>
     </Grid>
 </UserControl>

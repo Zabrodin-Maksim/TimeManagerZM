@@ -24,6 +24,9 @@ namespace TimeManagerZM.Services
                 case ViewType.Authorization:
                     _mainViewModel.CurrentViewModel = new AuthorizationViewMdoel(_mainViewModel); // To Authorization
                     break;
+                case ViewType.CreateActivity:
+                    _mainViewModel.CurrentViewModel = new CreateActivityViewModel(_mainViewModel); // To CreateActivity
+                    break;
             }
         }
 
