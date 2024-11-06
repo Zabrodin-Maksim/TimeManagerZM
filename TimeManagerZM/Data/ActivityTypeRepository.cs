@@ -19,11 +19,11 @@ namespace TimeManagerZM.Data
             connectionString = $"Data Source={databasePath};Version=3;";
         }
 
-        public void AddActivityType(ActivityType activityType)
+        public async Task AddActivityType(ActivityType activityType)
         {
             using (var connection = new SQLiteConnection(connectionString))
             {
-                connection.Open();
+                await connection.OpenAsync();
                 string query = "INSERT INTO ActivityTypes (TypeName, ColoActr, UserId) VALUES (@TypeName, @ColorAct, @UserId)";
                 SQLiteCommand command = new SQLiteCommand(query, connection);
 
@@ -31,25 +31,25 @@ namespace TimeManagerZM.Data
                 command.Parameters.AddWithValue("@ColorAct", activityType.ColoActr);
                 command.Parameters.AddWithValue("@UserId", activityType.UserId);
 
-                command.ExecuteNonQuery();
+                await command.ExecuteNonQueryAsync();
             }
         }
 
-        public List<ActivityType> GetAllActivityTypesByUserId(int id)
+        public async Task<List<ActivityType>> GetAllActivityTypesByUserId(int id)
         {
             List<ActivityType> activityTypes = new List<ActivityType>();
 
             using (var connection = new SQLiteConnection(connectionString))
             {
-                connection.Open();
+                await connection.OpenAsync();
                 string query = "SELECT * FROM ActivityTypes WHERE UserId = @userId";
                 SQLiteCommand command = new SQLiteCommand(query, connection);
 
                 command.Parameters.AddWithValue("@userId", id);
 
-                using (SQLiteDataReader reader = command.ExecuteReader())
+                using (var reader = await command.ExecuteReaderAsync())
                 {
-                    while (reader.Read())
+                    while (await reader.ReadAsync())
                     {
                         activityTypes.Add(new ActivityType
                         {
@@ -65,11 +65,11 @@ namespace TimeManagerZM.Data
             return activityTypes;
         }
 
-        public void UpdateActivityType(ActivityType activityType)
+        public async Task UpdateActivityType(ActivityType activityType)
         {
             using (var connection = new SQLiteConnection(connectionString))
             {
-                connection.Open();
+                await connection.OpenAsync();
                 string query = "UPDATE ActivityTypes SET TypeName = @TypeName, ColoActr = @ColorAct, UserId = @UserId WHERE Id = @Id";
                 SQLiteCommand command = new SQLiteCommand(query, connection);
 
@@ -78,20 +78,20 @@ namespace TimeManagerZM.Data
                 command.Parameters.AddWithValue("@UserId", activityType.UserId);
                 command.Parameters.AddWithValue("@Id", activityType.Id);
 
-                command.ExecuteNonQuery();
+                await command.ExecuteNonQueryAsync();
             }
         }
 
-        public void DeleteActivityType(int id)
+        public async Task DeleteActivityType(int id)
         {
             using (var connection = new SQLiteConnection(connectionString))
             {
-                connection.Open();
+                await connection.OpenAsync();
                 string query = "DELETE FROM ActivityTypes WHERE Id = @Id";
                 SQLiteCommand command = new SQLiteCommand(query, connection);
                 command.Parameters.AddWithValue("@Id", id);
 
-                command.ExecuteNonQuery();
+                await command.ExecuteNonQueryAsync();
             }
         }
     }

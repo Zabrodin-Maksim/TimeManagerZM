@@ -57,12 +57,13 @@ namespace TimeManagerZM.ViewModel
         public AuthorizationViewMdoel(MainViewModel mainViewModel)
         {
             _mainViewModel = mainViewModel;
-            RegisterCommand = new MyICommand<object>(Register);
-            LoginCommand = new MyICommand<object>(Login);
+            //RegisterCommand = new MyICommand<object>(async parameter => await Register(parameter));
+            RegisterCommand = new MyICommand<object>(async parameter => await Register(parameter));
+            LoginCommand = new MyICommand<object>(async parameter => await Login(parameter));
         }
 
         
-        private void Register(object parameter)
+        private async Task Register(object parameter)
         {
             AttentionTextPassword = "";
             AttentionTextUser = "";
@@ -80,7 +81,7 @@ namespace TimeManagerZM.ViewModel
                     AttentionTextPassword = "";
 
                     // Send to Database
-                    _mainViewModel.AddNewUser(UserName, UserPassword);
+                    await _mainViewModel.AddNewUser(UserName, UserPassword);
 
                     Debug.WriteLine("[INFO] A new User was successfully added!");
                 }
@@ -89,7 +90,7 @@ namespace TimeManagerZM.ViewModel
         }
 
         // TODO: LOGIN
-        private void Login(object parameter)
+        private async Task Login(object parameter)
         {
             if (parameter is PasswordBox passwordBox)
             {
@@ -104,7 +105,7 @@ namespace TimeManagerZM.ViewModel
                 else // is ok
                 {
                     // Check exist user 
-                    if (!_mainViewModel.GetUser(UserName, UserPassword))
+                    if ( !await _mainViewModel.GetUser(UserName, UserPassword))
                     {
                         AttentionTextUser = wrongLogin;
                         AttentionTextPassword = wrongPassword;

@@ -98,15 +98,15 @@ namespace TimeManagerZM.ViewModel
 
 
         #region Activity Data Methods
-        public void AddNewActivity(string activityName, DateTime startTime, DateTime? endTime, int activityTypeId)
+        public async Task AddNewActivity(string activityName, DateTime startTime, DateTime? endTime, int activityTypeId)
         {
             if (AuthorizedUser != null)
             {
                 try
                 {
-                    _activityVM.AddNewActivity(activityName, startTime, endTime, activityTypeId, AuthorizedUser.Id);
+                    await _activityVM.AddNewActivity(activityName, startTime, endTime, activityTypeId, AuthorizedUser.Id);
                     Debug.WriteLine($"[INFO] New activity added: {activityName}, start time: {startTime}, type: {activityTypeId}, user: {AuthorizedUser.Id}");
-                    LoadAllActivitiesByUserId();
+                    await LoadAllActivitiesByUserId();
                 }
                 catch (Exception ex)
                 {
@@ -116,14 +116,14 @@ namespace TimeManagerZM.ViewModel
             else MassageWindow(MessageBoxImage.Error, "Not authorized user!", "HO IS THIS?");
         }
 
-        public void LoadAllActivitiesByUserId()
+        public async Task LoadAllActivitiesByUserId()
         {
             if (AuthorizedUser != null)
             {
                 try
                 {
                     Activities.Clear();
-                    var allActivities = _activityVM.LoadAllActivitiesByUserId(AuthorizedUser.Id);
+                    var allActivities = await _activityVM.LoadAllActivitiesByUserId(AuthorizedUser.Id);
                     foreach (var activity in allActivities)
                     {
                         Activities.Add(activity);
@@ -138,14 +138,14 @@ namespace TimeManagerZM.ViewModel
             else MassageWindow(MessageBoxImage.Error, "Not authorized user!", "HO IS THIS?");
         }
 
-        public void UpdateExistingActivity(MyActivity activity)
+        public async Task UpdateExistingActivity(MyActivity activity)
         {
             try
             {
-                _activityVM.UpdateExistingActivity(activity);
+                await _activityVM.UpdateExistingActivity(activity);
                 Debug.WriteLine($"Activity with ID {activity.Id} updated");
                 
-                LoadAllActivitiesByUserId();
+                await LoadAllActivitiesByUserId();
             }
             catch (Exception ex)
             {
@@ -153,13 +153,13 @@ namespace TimeManagerZM.ViewModel
             }
         }
 
-        public void DeleteActivity(int id)
+        public async Task DeleteActivity(int id)
         {
             try
             {
-                _activityVM.DeleteActivity(id);
+                await _activityVM.DeleteActivity(id);
                 Debug.WriteLine($"Activity with ID {id} deleted");
-                LoadAllActivitiesByUserId();
+                await LoadAllActivitiesByUserId();
             }
             catch (Exception ex)
             {
@@ -172,15 +172,15 @@ namespace TimeManagerZM.ViewModel
 
         #region ActivityType Data Methods
 
-        public void AddNewActivityType(string typeName, string colorAct)
+        public async Task AddNewActivityType(string typeName, string colorAct)
         {
             if (AuthorizedUser != null)
             {
                 try
                 {
-                    _activityTypeVM.AddNewActivityType(typeName, colorAct, AuthorizedUser.Id);
+                    await _activityTypeVM.AddNewActivityType(typeName, colorAct, AuthorizedUser.Id);
                     Debug.WriteLine($"[INFO] New activity type added: {typeName}, user: {AuthorizedUser.Id}");
-                    LoadAllActivityTypes();
+                    await LoadAllActivityTypes();
                 }
                 catch (Exception ex)
                 {
@@ -190,14 +190,14 @@ namespace TimeManagerZM.ViewModel
             else MassageWindow(MessageBoxImage.Error, "Not authorized user!", "HO IS THIS?");
         }
 
-        public void LoadAllActivityTypes()
+        public async Task LoadAllActivityTypes()
         {
             if (AuthorizedUser != null)
             {
                 try
                 {
                     ActivityTypes.Clear();
-                    var allActivityTypes = _activityTypeVM.GetAllActivitiesByUserId(AuthorizedUser.Id);
+                    var allActivityTypes = await _activityTypeVM.GetAllActivitiesByUserId(AuthorizedUser.Id);
                     foreach (var activityType in allActivityTypes)
                     {
                         ActivityTypes.Add(activityType);
@@ -212,13 +212,13 @@ namespace TimeManagerZM.ViewModel
             else MassageWindow(MessageBoxImage.Error, "Not authorized user!", "HO IS THIS?");
         }
 
-        public void UpdateExistingActivityType(ActivityType activityType)
+        public async Task UpdateExistingActivityType(ActivityType activityType)
         {
             try
             {
-                _activityTypeVM.UpdateExistingActivityType(activityType);
+                await _activityTypeVM.UpdateExistingActivityType(activityType);
                 Debug.WriteLine($"Activity type with ID {activityType.Id} updated");
-                LoadAllActivityTypes();
+                await LoadAllActivityTypes();
             }
             catch (Exception ex)
             {
@@ -226,13 +226,13 @@ namespace TimeManagerZM.ViewModel
             }
         }
 
-        public void DeleteActivityType(int id)
+        public async Task DeleteActivityType(int id)
         {
             try
             {
-                _activityTypeVM.DeleteActivityType(id);
+                await _activityTypeVM.DeleteActivityType(id);
                 Debug.WriteLine($"Activity type with ID {id} deleted");
-                LoadAllActivityTypes();
+                await LoadAllActivityTypes();
             }
             catch (Exception ex)
             {
@@ -245,11 +245,11 @@ namespace TimeManagerZM.ViewModel
 
         #region User Data Methods
 
-        public void AddNewUser(string username, string password)
+        public async Task AddNewUser(string username, string password)
         {
             try
             {
-                _userVM.AddNewUser(username, password);
+                await _userVM.AddNewUser(username, password);
                 Debug.WriteLine($"[INFO] New user added: {username}");
                 //LoadAllUsers(); // Обновление списка пользователей после добавления нового
             }
@@ -259,11 +259,11 @@ namespace TimeManagerZM.ViewModel
             }
         }
 
-        public bool GetUser(string username, string password)
+        public async Task<bool> GetUser(string username, string password)
         {
             try
             {
-                AuthorizedUser = _userVM.GetUserByNameAndPassword(username, password);
+                AuthorizedUser = await _userVM.GetUserByNameAndPassword(username, password);
                 Debug.WriteLine($"[INFO] User {username} loaded");
                 if (AuthorizedUser != null) { return true; }
             }
@@ -274,11 +274,11 @@ namespace TimeManagerZM.ViewModel
             return false;
         }
 
-        public void UpdateExistingUser(User user)
+        public async Task UpdateExistingUser(User user)
         {
             try
             {
-                _userVM.UpdateExistingUser(user);
+                await _userVM.UpdateExistingUser(user);
                 Debug.WriteLine($"User with ID {user.Id} updated");
                 //LoadAllUsers();
             }
@@ -288,11 +288,11 @@ namespace TimeManagerZM.ViewModel
             }
         }
 
-        public void DeleteUser(int id)
+        public async Task DeleteUser(int id)
         {
             try
             {
-                _userVM.DeleteUser(id);
+                await _userVM.DeleteUser(id);
                 Debug.WriteLine($"User with ID {id} deleted");
                 //LoadAllUsers();
             }

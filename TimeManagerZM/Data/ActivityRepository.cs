@@ -18,11 +18,11 @@ namespace TimeManagerZM.Data
             connectionString = $"Data Source={databasePath};Version=3;";
         }
 
-        public void AddActivity(MyActivity activity)
+        public async Task AddActivity(MyActivity activity)
         {
             using (var connection = new SQLiteConnection(connectionString))
             {
-                connection.Open();
+                await connection.OpenAsync();
                 string query = "INSERT INTO Activity (ActivityName, StartTime, EndTime, ActivityTypeId, UserId) " +
                                "VALUES (@ActivityName, @StartTime, @EndTime, @ActivityTypeId, @UserId)";
                 SQLiteCommand command = new SQLiteCommand(query, connection);
@@ -33,23 +33,23 @@ namespace TimeManagerZM.Data
                 command.Parameters.AddWithValue("@ActivityTypeId", activity.ActivityTypeId);
                 command.Parameters.AddWithValue("@UserId", activity.UserId);
 
-                command.ExecuteNonQuery();
+                await command.ExecuteNonQueryAsync();
             }
         }
 
-        public List<MyActivity> GetAllActivitiesByUserId(int userId)
+        public async Task<List<MyActivity>> GetAllActivitiesByUserId(int userId)
         {
             List<MyActivity> activities = new List<MyActivity>();
 
             using (var connection = new SQLiteConnection(connectionString))
             {
-                connection.Open();
+                await connection.OpenAsync();
                 string query = "SELECT * FROM Activity WHERE UserId = @userId";
                 SQLiteCommand command = new SQLiteCommand(query, connection);
 
                 command.Parameters.AddWithValue("@userId", userId);
 
-                using (SQLiteDataReader reader = command.ExecuteReader())
+                using (var reader = await command.ExecuteReaderAsync())
                 {
                     while (reader.Read())
                     {
@@ -69,18 +69,18 @@ namespace TimeManagerZM.Data
             return activities;
         }
 
-        public MyActivity GetActivityById(int id)
+        public async Task<MyActivity> GetActivityById(int id)
         {
             MyActivity activity = null;
 
             using (var connection = new SQLiteConnection(connectionString))
             {
-                connection.Open();
+                await connection.OpenAsync();
                 string query = "SELECT * FROM Activity WHERE Id = @Id";
                 SQLiteCommand command = new SQLiteCommand(query, connection);
                 command.Parameters.AddWithValue("@Id", id);
 
-                using (SQLiteDataReader reader = command.ExecuteReader())
+                using (var reader = await command.ExecuteReaderAsync())
                 {
                     if (reader.Read())
                     {
@@ -100,11 +100,11 @@ namespace TimeManagerZM.Data
             return activity;
         }
 
-        public void UpdateActivity(MyActivity activity)
+        public async Task UpdateActivity(MyActivity activity)
         {
             using (var connection = new SQLiteConnection(connectionString))
             {
-                connection.Open();
+                await connection.OpenAsync();
                 string query = "UPDATE Activity SET ActivityName = @ActivityName, StartTime = @StartTime, " +
                                "EndTime = @EndTime, ActivityTypeId = @ActivityTypeId, UserId = @UserId WHERE Id = @Id";
                 SQLiteCommand command = new SQLiteCommand(query, connection);
@@ -116,20 +116,20 @@ namespace TimeManagerZM.Data
                 command.Parameters.AddWithValue("@UserId", activity.UserId);
                 command.Parameters.AddWithValue("@Id", activity.Id);
 
-                command.ExecuteNonQuery();
+                await command.ExecuteNonQueryAsync();
             }
         }
 
-        public void DeleteActivity(int id)
+        public async Task DeleteActivity(int id)
         {
             using (var connection = new SQLiteConnection(connectionString))
             {
-                connection.Open();
+                await connection.OpenAsync();
                 string query = "DELETE FROM Activity WHERE Id = @Id";
                 SQLiteCommand command = new SQLiteCommand(query, connection);
                 command.Parameters.AddWithValue("@Id", id);
 
-                command.ExecuteNonQuery();
+                await command.ExecuteNonQueryAsync();
             }
         }
     }

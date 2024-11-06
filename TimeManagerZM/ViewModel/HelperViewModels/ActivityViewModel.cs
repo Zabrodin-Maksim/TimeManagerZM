@@ -17,7 +17,7 @@ namespace TimeManagerZM.ViewModel
             _activityRepository = new ActivityRepository();
         }
 
-        public void AddNewActivity(string activityName, DateTime startTime, DateTime? endTime, int activityTypeId, int userId)
+        public async Task AddNewActivity(string activityName, DateTime startTime, DateTime? endTime, int activityTypeId, int userId)
         {
             var newActivity = new MyActivity
             {
@@ -28,27 +28,27 @@ namespace TimeManagerZM.ViewModel
                 UserId = userId
             };
 
-            _activityRepository.AddActivity(newActivity);
+            await _activityRepository.AddActivity(newActivity);
         }
 
-        public List<MyActivity> LoadAllActivitiesByUserId(int id)
+        public async Task<List<MyActivity>> LoadAllActivitiesByUserId(int id)
         {
-           return _activityRepository.GetAllActivitiesByUserId(id);
+           return await _activityRepository.GetAllActivitiesByUserId(id);
         }
 
-        public MyActivity GetActivityById(int id)
+        public async Task<MyActivity> GetActivityById(int id)
         {
-            return _activityRepository.GetActivityById(id);
+            return await _activityRepository.GetActivityById(id);
         }
 
-        public void UpdateExistingActivity(MyActivity activity)
+        public async Task UpdateExistingActivity(MyActivity activity)
         {
-            _activityRepository.UpdateActivity(activity);
+            await _activityRepository.UpdateActivity(activity);
         }
 
-        public void DeleteActivity(int id)
+        public async Task DeleteActivity(int id)
         {
-            _activityRepository.DeleteActivity(id);
+            await _activityRepository.DeleteActivity(id);
         }
     }
 }

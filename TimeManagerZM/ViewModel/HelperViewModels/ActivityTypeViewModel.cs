@@ -18,7 +18,7 @@ namespace TimeManagerZM.ViewModel.HelperViewModels
             _activityTypeRepository = new ActivityTypeRepository();
         }
 
-        public void AddNewActivityType(string typeName, string colorAct, int userId)
+        public async Task AddNewActivityType(string typeName, string colorAct, int userId)
         {
             var newActivityType = new ActivityType
             {
@@ -27,22 +27,22 @@ namespace TimeManagerZM.ViewModel.HelperViewModels
                 UserId = userId
             };
 
-            _activityTypeRepository.AddActivityType(newActivityType);
+            await _activityTypeRepository.AddActivityType(newActivityType);
         }
   
-        public List<ActivityType> GetAllActivitiesByUserId(int id)
+        public async Task<List<ActivityType>> GetAllActivitiesByUserId(int id)
         {
-            return _activityTypeRepository.GetAllActivityTypesByUserId(id);
+            return await _activityTypeRepository.GetAllActivityTypesByUserId(id);
         }
 
-        public void UpdateExistingActivityType(ActivityType activityType)
+        public async Task UpdateExistingActivityType(ActivityType activityType)
         {
-            _activityTypeRepository.UpdateActivityType(activityType);
+            await _activityTypeRepository.UpdateActivityType(activityType);
         }
 
-        public void DeleteActivityType(int id)
+        public async Task DeleteActivityType(int id)
         {
-            _activityTypeRepository.DeleteActivityType(id);
+            await _activityTypeRepository.DeleteActivityType(id);
         }
     }
 }

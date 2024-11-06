@@ -19,7 +19,7 @@ namespace TimeManagerZM.ViewModel
         }
 
         // Метод для добавления нового пользователя
-        public void AddNewUser(string userName, string password)
+        public async Task AddNewUser(string userName, string password)
         {
             var newUser = new User
             {
@@ -27,36 +27,36 @@ namespace TimeManagerZM.ViewModel
                 Password = password
             };
 
-            _userRepository.AddUser(newUser);
+            await _userRepository.AddUser(newUser);
         }
 
         // Метод для получения всех пользователей
-        public List<User> LoadAllUsers()
+        public async Task<List<User>> LoadAllUsers()
         {
-            return _userRepository.GetAllUsers();
+            return await _userRepository.GetAllUsers();
         }
 
         // Метод для получения пользователя по Id
-        public User GetUserById(int id)
+        public async Task<User> GetUserById(int id)
         {
-            return _userRepository.GetUserById(id);
+            return await _userRepository.GetUserById(id);
         }
 
         // Метод для обновления данных пользователя
-        public void UpdateExistingUser(User user)
+        public async Task UpdateExistingUser(User user)
         {
-            _userRepository.UpdateUser(user);
+            await _userRepository.UpdateUser(user);
         }
 
         // Метод для удаления пользователя
-        public void DeleteUser(int id)
+        public async Task DeleteUser(int id)
         {
-            _userRepository.DeleteUser(id);
+            await _userRepository.DeleteUser(id);
         }
 
-        internal User GetUserByNameAndPassword(string username, string password)
+        public async Task<User> GetUserByNameAndPassword(string username, string password)
         {
-           return _userRepository.GetUserByNameAndPassword(username, password);
+           return await _userRepository.GetUserByNameAndPassword(username, password);
         }
     }
 }

@@ -23,11 +23,11 @@ namespace TimeManagerZM.Data
             connectionString = $"Data Source={databasePath};Version=3;";
         }
 
-        public void AddUser(User user)
+        public async Task AddUser(User user)
         {
             using (var connection = new SQLiteConnection(connectionString))
             {
-                connection.Open();
+                await connection.OpenAsync();
                 string query = "INSERT INTO User (UserName, Password) VALUES (@UserName, @Password)";
                 SQLiteCommand command = new SQLiteCommand(query, connection);
 
@@ -36,21 +36,21 @@ namespace TimeManagerZM.Data
                 command.Parameters.AddWithValue("@UserName", user.UserName);
                 command.Parameters.AddWithValue("@Password", hashedPassword);
 
-                command.ExecuteNonQuery();
+               await command.ExecuteNonQueryAsync();
             }
         }
 
-        public List<User> GetAllUsers()
+        public async Task<List<User>> GetAllUsers()
         {
             List<User> users = new List<User>();
 
             using (var connection = new SQLiteConnection(connectionString))
             {
-                connection.Open();
+                await connection.OpenAsync();
                 string query = "SELECT * FROM User";
                 SQLiteCommand command = new SQLiteCommand(query, connection);
 
-                using (SQLiteDataReader reader = command.ExecuteReader())
+                using (var reader = await command.ExecuteReaderAsync())
                 {
                     while (reader.Read())
                     {
@@ -67,20 +67,20 @@ namespace TimeManagerZM.Data
             return users;
         }
 
-        public User GetUserById(int id)
+        public async Task<User> GetUserById(int id)
         {
             User user = null;
 
             using (var connection = new SQLiteConnection(connectionString))
             {
-                connection.Open();
+                await connection.OpenAsync();
                 string query = "SELECT * FROM User WHERE Id = @Id";
                 SQLiteCommand command = new SQLiteCommand(query, connection);
                 command.Parameters.AddWithValue("@Id", id);
 
-                using (SQLiteDataReader reader = command.ExecuteReader())
+                using (var reader = await command.ExecuteReaderAsync())
                 {
-                    if (reader.Read())
+                    if (await reader.ReadAsync())
                     {
                         user = new User
                         {
@@ -95,22 +95,21 @@ namespace TimeManagerZM.Data
             return user;
         }
 
-        public User GetUserByNameAndPassword(string name, string password)
+        public async Task<User> GetUserByNameAndPassword(string name, string password)
         {
             User user = null;
 
             using (var connection = new SQLiteConnection(connectionString)) 
             {
-                connection.Open();
-                string query = "SELECT * FROM User WHERE UserName = @UserName AND Password = @UserPassword";
+                await connection.OpenAsync();
+                string query = "SELECT * FROM User WHERE UserName = @UserName";
                 SQLiteCommand command = new SQLiteCommand(query, connection);
 
                 command.Parameters.AddWithValue("@UserName", name);
-                command.Parameters.AddWithValue("@UserPassword", password);
 
-                using (SQLiteDataReader reader = command.ExecuteReader())
+                using (var reader = await command.ExecuteReaderAsync())
                 {
-                    if (reader.Read())
+                    if (await reader.ReadAsync())
                     {
                         user = new User
                         {
@@ -129,11 +128,11 @@ namespace TimeManagerZM.Data
             return null;
         }
 
-        public void UpdateUser(User user)
+        public async Task UpdateUser(User user)
         {
             using (var connection = new SQLiteConnection(connectionString))
             {
-                connection.Open();
+                await connection.OpenAsync();
                 string query = "UPDATE User SET UserName = @UserName, Password = @Password WHERE Id = @Id";
                 SQLiteCommand command = new SQLiteCommand(query, connection);
 
@@ -143,20 +142,20 @@ namespace TimeManagerZM.Data
                 command.Parameters.AddWithValue("@Password", hashedPassword);
                 command.Parameters.AddWithValue("@Id", user.Id);
 
-                command.ExecuteNonQuery();
+                await command.ExecuteNonQueryAsync();
             }
         }
 
-        public void DeleteUser(int id)
+        public async Task DeleteUser(int id)
         {
             using (var connection = new SQLiteConnection(connectionString))
             {
-                connection.Open();
+                await connection.OpenAsync();
                 string query = "DELETE FROM User WHERE Id = @Id";
                 SQLiteCommand command = new SQLiteCommand(query, connection);
                 command.Parameters.AddWithValue("@Id", id);
 
-                command.ExecuteNonQuery();
+                await command.ExecuteNonQueryAsync();
             }
         }
     }
